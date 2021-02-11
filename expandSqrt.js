@@ -18,8 +18,6 @@ function perform(){
         return decimals.reverse();
     };
 
-    const countDigit = n => decimalSplit(n).length;
-
     const repeat = (n, c = " ") => Array(Math.max(0, n)).fill().reduce((s, _) => s + c, "");
 
     const formatDecimals = (value, digits, fillZeros=false, showZero=true) => {
@@ -35,8 +33,6 @@ function perform(){
 
     const range = (start, stop) => Array.from({ length: stop - start + 1}, (_, i) => start + i);
 
-    let decimals = decimalSplit(value);
-
     let hundreds = [];
     for(let reduced = value; 1 < reduced; reduced /= 100.){
         hundreds.push((reduced << 0) % 100);
@@ -45,12 +41,10 @@ function perform(){
     hundreds.reverse();
 
     let writeAns = "";
-    let writeNextLeft = [];
-    let writeNextRight = [];
 
-    const first = `first, we split the input into blocks of two digits, ${hundreds.reduce((accum, val) => accum += " | " + val, "")}`;
+    const first = `<li>first, we split the input into blocks of two digits, ${hundreds.reduce((accum, val) => accum += " | " + val, "")} |`;
 
-    const second = `look at the most significant block, which is ${hundreds[0]}`;
+    const second = `<li>look at the most significant block, which is ${hundreds[0]}`;
 
     let ans = [];
 
@@ -60,25 +54,25 @@ function perform(){
     ans.push(topDigit);
     writeAns += " " + formatDecimals(topDigit, 3);
 
-    const topStr = `The biggest number that its square won't exceed ${hundreds[0]} is ${topDigit}, which is the first digit of the answer`;
+    const topStr = `<li>The biggest number that its square won't exceed ${hundreds[0]} is ${topDigit}, which is the first digit of the answer`;
 
     let sum = topDigit * 2;
     let lhs = ["" + topDigit + " ", "" + topDigit + " "];
     let rhs = [hundreds.reduce((accum, val) => accum ? accum += " | " + formatDecimals(val, 2, true) : formatDecimals(val, 2), ""),
         formatDecimals(topDigit * topDigit, 2)];
 
-    const topSum = `On the left hand side, add the number together to get ${sum}`;
+    const topSum = `<li>On the left hand side, add the number together to get ${sum}`;
 
     let carry = hundreds[0] - topDigit * topDigit;
 
-    const topSub = `On the right hand side, subtract the square of that number ${topDigit * topDigit} from top block ${hundreds[0]} to get remaining ${carry}`;
+    const topSub = `<li>On the right hand side, subtract the square of that number ${topDigit * topDigit} from top block ${hundreds[0]} to get remaining ${carry}`;
 
     let nextBlockStr = "";
 
     for(let digit = 1; digit < hundreds.length; digit++){
         const nextBlock = carry * 100 + hundreds[digit];
 
-        nextBlockStr += `The next block is ${nextBlock}, which is sum of remainder ${carry} times 100 and second block ${hundreds[digit]}<br>`;
+        nextBlockStr += `<li>The next block is ${nextBlock}, which is sum of remainder ${carry} times 100 and second block ${hundreds[digit]}<br>`;
 
         topDigit = 0;
         for(topDigit = 1; (sum * 10 + topDigit) * topDigit <= nextBlock; topDigit++);
@@ -86,12 +80,12 @@ function perform(){
         ans.push(topDigit);
         writeAns += formatDecimals(topDigit, 5);
 
-        nextBlockStr += `Let's find the biggest number x that (${sum} * 10 + x)x won't exceed the block ${nextBlock
+        nextBlockStr += `<li>Let's find the biggest number x that (${sum} * 10 + x)x won't exceed the block ${nextBlock
         }, which is ${topDigit}<br>`;
 
         const sub = (sum * 10 + topDigit) * topDigit;
 
-        nextBlockStr += `On the left hand side, add the number together to get ${sum * 10 + topDigit}<br>`;
+        nextBlockStr += `<li>On the left hand side, add the number together to get ${sum * 10 + topDigit}<br>`;
 
         lhs.push(formatDecimals(sum * 10 + topDigit, digit + 1));
         lhs.push(formatDecimals(topDigit, digit + 1));
@@ -104,14 +98,14 @@ function perform(){
 
         carry = nextBlock - sub;
 
-        nextBlockStr += `On the right hand side, subtract the (${sum} * 10 + x)x = ${sub} from current block ${nextBlock} to get remaining ${carry}<br>`;
+        nextBlockStr += `<li>On the right hand side, subtract the (${sum} * 10 + x)x = ${sub} from current block ${nextBlock} to get remaining ${carry}<br>`;
 
         sum = sum * 10 + topDigit * 2;
     }
 
     const ansNum = ans.reduce((accum, val) => accum * 10 + val, 0);
 
-    const ansStr = `Now we figured out that the answer is ${ansNum}. Let's try squaring it: ${ansNum * ansNum}`;
+    const ansStr = `<li>Now we figured out that the answer is ${ansNum}. Let's try squaring it: ${ansNum * ansNum}`;
 
     const rightFill = (s, len) => {
         const left = len - s.length;
@@ -135,12 +129,13 @@ function perform(){
 
     write.innerHTML = `${writeStr}`;
 
-    out.innerHTML = `Input: ${decimals}<br>
-    ${first}<br>
-    ${second}<br>
-    ${topStr}<br>
-    ${topSum}<br>
-    ${topSub}<br>
+    out.innerHTML = `<ul>
+    ${first}
+    ${second}
+    ${topStr}
+    ${topSum}
+    ${topSub}
     ${nextBlockStr}
-    ${ansStr}`;
+    ${ansStr}
+    </ul>`;
 }
