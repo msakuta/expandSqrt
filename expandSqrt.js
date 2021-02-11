@@ -57,7 +57,7 @@ function perform(){
     const topStr = `<li>The biggest number that its square won't exceed ${hundreds[0]} is ${topDigit}, which is the first digit of the answer`;
 
     let sum = topDigit * 2;
-    let lhs = ["" + topDigit + " ", "" + topDigit + " "];
+    let lhs = [formatDecimals(topDigit, 2), formatDecimals(topDigit, 2)];
     let rhs = [hundreds.reduce((accum, val) => accum ? accum += " | " + formatDecimals(val, 2, true) : formatDecimals(val, 2), ""),
         formatDecimals(topDigit * topDigit, 2)];
 
@@ -87,8 +87,8 @@ function perform(){
 
         nextBlockStr += `<li>On the left hand side, add the number together to get ${sum * 10 + topDigit}<br>`;
 
-        lhs.push(formatDecimals(sum * 10 + topDigit, digit + 1));
-        lhs.push(formatDecimals(topDigit, digit + 1));
+        lhs.push(formatDecimals(sum * 10 + topDigit, digit + 2));
+        lhs.push(formatDecimals(topDigit, digit + 2));
         rhs.push(range(0, digit).reduce((s, digit) =>
             formatDecimals(nextBlock / Math.pow(100, digit) % 100, 2,
                 Math.pow(100, digit + 1) < nextBlock, false) + "   " + s, ""));
